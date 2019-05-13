@@ -2,7 +2,10 @@ package cn.com.flycash.stupidmock;
 
 import cn.com.flycash.stupidmock.classloader.StupidMockClassLoader;
 import net.sf.cglib.proxy.Enhancer;
+import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.NoOp;
+import org.objenesis.Objenesis;
+import org.objenesis.ObjenesisStd;
 
 public class StupidMock {
 
@@ -10,22 +13,14 @@ public class StupidMock {
     public static <T> T mock(Class<T> tClass) {
         Enhancer enhancer = new Enhancer();
 
-        // is final class
-        if ((tClass.getModifiers() & 16) > 0) {
-            try {
-                Class removeFinalClass = new StupidMockClassLoader().loadClass(tClass.getName());
-                enhancer.setSuperclass(removeFinalClass);
-                enhancer.setCallback(NoOp.INSTANCE);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-        } else if (tClass.isInterface()) {
+        if (tClass.isInterface()) {
             enhancer.setInterfaces(new Class[]{tClass});
         } else {
             enhancer.setSuperclass(tClass);
         }
-
-        return (T) enhancer.create();
+        enhancer.setCallbackType(MethodInterceptor.class);
+        Objenesis objenesis = new ObjenesisStd(true);
+        return (T) objenesis.newInstance(enhancer.createClass());
+//        return (T) enhancer.create();
     }
 }
