@@ -1,6 +1,5 @@
 package cn.com.flycash.stupidmock.classloader;
 
-import cn.com.flycash.stupidmock.StupidMock;
 import cn.com.flycash.stupidmock.testobj.FinalObject;
 import org.junit.Test;
 
@@ -12,11 +11,13 @@ public class StupidMockClassLoaderTest {
     @SuppressWarnings("unchecked")
     public void findClass() throws Exception {
         StupidMockClassLoader classLoader = new StupidMockClassLoader();
-        Class<FinalObject> originClass = FinalObject.class;
-        Class<FinalObject> finalObjectClass = (Class<FinalObject>) classLoader.findClass("cn.com.flycash.stupidmock.testobj.FinalObject");
-        System.out.println(originClass.getModifiers());
-        System.out.println(finalObjectClass.getModifiers());
-        assertEquals(16, originClass.getModifiers()- finalObjectClass.getModifiers());
+        Class finalObjectClass =Class.forName(
+                "cn.com.flycash.stupidmock.testobj.FinalObject",
+                true,
+                classLoader);
+
+        FinalObject object = (FinalObject) finalObjectClass.getConstructor().newInstance();
+        assertNotNull(object);
     }
 
 

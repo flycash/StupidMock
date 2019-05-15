@@ -8,7 +8,7 @@ import java.io.IOException;
 public class StupidMockClassLoader extends ClassLoader {
 
     public StupidMockClassLoader() {
-        super(null);
+        super(ClassLoader.getSystemClassLoader().getParent());
     }
 
     @Override
