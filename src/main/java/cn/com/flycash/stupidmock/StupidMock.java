@@ -1,9 +1,7 @@
 package cn.com.flycash.stupidmock;
 
-import cn.com.flycash.stupidmock.classloader.StupidMockClassLoader;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
-import net.sf.cglib.proxy.NoOp;
 import org.objenesis.Objenesis;
 import org.objenesis.ObjenesisStd;
 

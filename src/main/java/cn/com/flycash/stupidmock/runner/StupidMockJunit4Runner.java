@@ -7,33 +7,22 @@ import org.junit.runners.model.InitializationError;
 
 public class StupidMockJunit4Runner extends BlockJUnit4ClassRunner {
 
-    private static final ClassLoader classLoader = new StupidMockClassLoader();
-
+    /**
+     * Creates a BlockJUnit4ClassRunner to run {@code klass}
+     *
+     * @param klass
+     * @throws InitializationError if the test class is malformed.
+     */
     public StupidMockJunit4Runner(Class<?> klass) throws InitializationError {
-        super(loadClass(klass));
+        super(mockClz(klass));
     }
 
-    @Override
-    public void run(RunNotifier notifier) {
-        Runnable runnable = () -> {
-            super.run(notifier);
-        };
-        Thread thread = new Thread(runnable);
-        thread.setContextClassLoader(classLoader);
-        thread.start();
+    private static Class<?> mockClz(Class<?> klass) throws InitializationError {
         try {
-            thread.join();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static Class<?> loadClass(Class<?> klass) throws InitializationError {
-        try {
-            Thread.currentThread().setContextClassLoader(classLoader);
-            return classLoader.loadClass(klass.getName());
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            ClassLoader loader = new StupidMockClassLoader(klass);
+            Class<?> afterModified = Class.forName(klass.getName(), true, loader);
+            return afterModified;
+        } catch (Exception e) {
             throw new InitializationError(e);
         }
     }
