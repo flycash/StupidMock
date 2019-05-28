@@ -2,7 +2,9 @@ package cn.com.flycash.stupidmock.classloader;
 
 import cn.com.flycash.stupidmock.classloader.annotation.PrepareForTest;
 import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.Opcodes;
 
 import java.io.IOException;
 import java.lang.ref.SoftReference;
@@ -18,22 +20,28 @@ public class StupidMockClassLoader extends ClassLoader {
     //缓存
     private final ConcurrentMap<String, SoftReference<Class<?>>> classes;
 
-    private final static final String ALWAYS_IGNORE_PACKAGE
-    private Set<String> clzNeedToMock = new HashSet<>();
+    private final static String[] ALWAYS_IGNORE_PACKAGE = new String[]{
+            "java.",
+            "sun.",
+            "jdk.",
+            "org.junit."
+    };
+
+
+    private Set<String> clzNeedToModified = new HashSet<>();
+    private String testClzName;
     public StupidMockClassLoader(Class<?> testClz) {
         super(Thread.currentThread().getContextClassLoader());
         PrepareForTest annotation = testClz.getAnnotation(PrepareForTest.class);
         if (annotation != null) {
             Class[] targets = annotation.targets();
-            clzNeedToMock = Arrays.stream(targets)
+            clzNeedToModified = Arrays.stream(targets)
                     .map(Class::getName)
                     .collect(Collectors.toSet());
         }
 
-        // 将测试类自身加入进去
-        clzNeedToMock.add(testClz.getName());
-
         classes = new ConcurrentHashMap<>();
+        testClzName = testClz.getName();
     }
 
     @Override
@@ -47,7 +55,12 @@ public class StupidMockClassLoader extends ClassLoader {
                 result = getParent().loadClass(name);
 
             } else {
-                result = loadMockClass(name);
+                if (needModify(name)) {
+                    result = loadModifiedClass(name);
+                } else {
+                    result = loadUnmodifiedClass(name);
+                }
+
             }
             if (result == null) {
                 throw new ClassNotFoundException("Can not load the class: " + name);
@@ -61,7 +74,21 @@ public class StupidMockClassLoader extends ClassLoader {
         }
     }
 
-    private Class<?> loadMockClass(String name) throws ClassNotFoundException {
+    private Class<?> loadUnmodifiedClass(String name) throws ClassNotFoundException {
+        try {
+            ClassReader reader = new ClassReader(name);
+            ClassWriter writer = new ClassWriter(reader, 0);
+            reader.accept(new DoNothingClassVisitor(writer), ClassReader.SKIP_CODE);
+            byte[] bytes = writer.toByteArray();
+            return defineClass(name, bytes, 0, bytes.length);
+        } catch (IOException e) {
+            throw new ClassNotFoundException(name, e);
+        }
+    }
+
+
+
+    private Class<?> loadModifiedClass(String name) throws ClassNotFoundException {
         try {
             ClassReader reader = new ClassReader(name);
             ClassWriter writer = new ClassWriter(reader, 0);
@@ -73,6 +100,7 @@ public class StupidMockClassLoader extends ClassLoader {
             throw new ClassNotFoundException(name, e);
         }
     }
+
 
     private Class<?> findLoadedClass1(String name) {
         SoftReference<Class<?>> reference = classes.get(name);
@@ -86,8 +114,17 @@ public class StupidMockClassLoader extends ClassLoader {
         return clazz;
     }
 
-    private boolean needLoadByThis(String name) {
-        return clzNeedToMock.contains(name);
+    private boolean needModify(String name) {
+        return clzNeedToModified.contains(name);
     }
 
+    private boolean needLoadByThis(String name) {
+        return Arrays.stream(ALWAYS_IGNORE_PACKAGE).noneMatch(name::startsWith) || name.equals(testClzName);
+    }
+
+    private static final class DoNothingClassVisitor extends ClassVisitor {
+        public DoNothingClassVisitor(ClassVisitor classVisitor) {
+            super(Opcodes.ASM7, classVisitor);
+        }
+    }
 }
