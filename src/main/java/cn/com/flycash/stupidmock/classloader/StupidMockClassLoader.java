@@ -15,8 +15,10 @@ import java.util.stream.Collectors;
 
 public class StupidMockClassLoader extends ClassLoader {
 
+    //缓存
     private final ConcurrentMap<String, SoftReference<Class<?>>> classes;
 
+    private final static final String ALWAYS_IGNORE_PACKAGE
     private Set<String> clzNeedToMock = new HashSet<>();
     public StupidMockClassLoader(Class<?> testClz) {
         super(Thread.currentThread().getContextClassLoader());
@@ -28,6 +30,9 @@ public class StupidMockClassLoader extends ClassLoader {
                     .collect(Collectors.toSet());
         }
 
+        // 将测试类自身加入进去
+        clzNeedToMock.add(testClz.getName());
+
         classes = new ConcurrentHashMap<>();
     }
 
@@ -38,7 +43,7 @@ public class StupidMockClassLoader extends ClassLoader {
             if (result != null) {
                 return result;
             }
-            if (!clzNeedToMock.contains(name)) {
+            if (!needLoadByThis(name)) {
                 result = getParent().loadClass(name);
 
             } else {
@@ -79,6 +84,10 @@ public class StupidMockClassLoader extends ClassLoader {
             clazz = findLoadedClass(name);
         }
         return clazz;
+    }
+
+    private boolean needLoadByThis(String name) {
+        return clzNeedToMock.contains(name);
     }
 
 }
