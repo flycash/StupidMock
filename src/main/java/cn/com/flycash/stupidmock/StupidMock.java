@@ -19,6 +19,5 @@ public class StupidMock {
         enhancer.setCallbackType(MethodInterceptor.class);
         Objenesis objenesis = new ObjenesisStd(true);
         return (T) objenesis.newInstance(enhancer.createClass());
-//        return (T) enhancer.create();
     }
 }

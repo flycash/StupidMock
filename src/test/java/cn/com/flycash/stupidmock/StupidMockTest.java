@@ -2,10 +2,7 @@ package cn.com.flycash.stupidmock;
 
 import cn.com.flycash.stupidmock.classloader.annotation.PrepareForTest;
 import cn.com.flycash.stupidmock.runner.StupidMockJunit4Runner;
-import cn.com.flycash.stupidmock.testobj.FinalObject;
-import cn.com.flycash.stupidmock.testobj.FinalObjectUsage;
-import cn.com.flycash.stupidmock.testobj.NoDefaultConstructorClass;
-import cn.com.flycash.stupidmock.testobj.SimpleInterface;
+import cn.com.flycash.stupidmock.testobj.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
