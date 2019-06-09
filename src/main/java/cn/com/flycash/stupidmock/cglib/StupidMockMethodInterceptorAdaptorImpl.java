@@ -1,6 +1,8 @@
 package cn.com.flycash.stupidmock.cglib;
 
 import cn.com.flycash.stupidmock.MockObjectSkeleton;
+import cn.com.flycash.stupidmock.stub.StubBuilder;
+import cn.com.flycash.stupidmock.stub.ThreadSafeStubBuilder;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 
@@ -14,8 +16,10 @@ public class StupidMockMethodInterceptorAdaptorImpl implements MethodInterceptor
 
     private MockObjectSkeleton skeleton = new MockObjectSkeleton();
 
+    private StubBuilder stubBuilder = new ThreadSafeStubBuilder();
+
     @Override
     public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
-        proxy.i
+
     }
 }
