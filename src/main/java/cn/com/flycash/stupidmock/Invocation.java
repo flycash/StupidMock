@@ -1,4 +1,4 @@
-package cn.com.flycash.stupidmock.invocation;
+package cn.com.flycash.stupidmock;
 
 import java.lang.reflect.Method;
 

@@ -9,5 +9,8 @@
         <module name="StupidMock" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="StupidMock" target="1.11" />
+    </bytecodeTargetLevel>
   </component>
 </project>

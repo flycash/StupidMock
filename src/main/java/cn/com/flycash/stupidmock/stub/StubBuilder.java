@@ -7,11 +7,6 @@ import java.lang.reflect.Method;
 
 public interface StubBuilder {
 
-    StubBuilder setTarget(Object mockObj);
-
-    StubBuilder setArgMatchers(ArgMatcher...matchers);
-
-    StubBuilder setMethod(Method method);
 
     StubBuilder setAnswer(Answer answer);
 
