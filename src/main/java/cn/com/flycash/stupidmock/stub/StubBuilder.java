@@ -5,10 +5,19 @@ import cn.com.flycash.stupidmock.stub.args.ArgMatcher;
 
 import java.lang.reflect.Method;
 
-public interface StubBuilder {
+public interface StubBuilder<T> {
 
+    StubBuilder<T> setTarget(Object mockObj);
 
-    StubBuilder setAnswer(Answer answer);
+    StubBuilder<T> setArgMatchers(ArgMatcher...matchers);
 
-    IStub build();
+    StubBuilder<T> setMethod(Method method);
+
+    StubBuilder<T> then(Answer answer);
+
+    StubBuilder<T> thenReturn(T obj);
+
+    void addObserver(BuildingStubObserver observer);
+
+    IStub<T> build();
 }

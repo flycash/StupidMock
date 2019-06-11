@@ -6,7 +6,7 @@ import cn.com.flycash.stupidmock.stub.args.ArgMatcher;
 
 import java.lang.reflect.Method;
 
-public class DefaultStubImpl implements IStub {
+public class DefaultStubImpl<T> implements IStub<T> {
 
     private final Object target;
     private final Method method;

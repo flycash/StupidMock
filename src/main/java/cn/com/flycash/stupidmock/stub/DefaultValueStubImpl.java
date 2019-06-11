@@ -12,11 +12,6 @@ public class DefaultValueStubImpl extends AbstractStub {
     }
 
     @Override
-    public IStub then(Answer answer) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public boolean match(Invocation invocation) {
         throw new UnsupportedOperationException();
     }

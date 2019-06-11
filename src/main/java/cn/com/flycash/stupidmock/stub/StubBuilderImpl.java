@@ -5,7 +5,7 @@ import cn.com.flycash.stupidmock.stub.args.ArgMatcher;
 
 import java.lang.reflect.Method;
 
-public class StubBuilderImpl implements StubBuilder {
+public class StubBuilderImpl<T> extends AbstractStubBuilder<T> {
 
     /**
      * mock obj
@@ -33,19 +33,18 @@ public class StubBuilderImpl implements StubBuilder {
     }
 
     @Override
-    public StubBuilder setAnswer(Answer answer) {
-        this.answer = answer;
-        return null;
-    }
-
-    @Override
     public StubBuilderImpl setTarget(Object target) {
         this.target = target;
         return this;
     }
 
     @Override
-    public IStub build() {
-        return new DefaultStubImpl(target, method, argMatchers, answer);
+    public StubBuilder<T> then(Answer answer) {
+        return null;
+    }
+
+    @Override
+    public IStub<T> doBuild() {
+        return new DefaultStubImpl<T>(target, method, argMatchers, answer);
     }
 }
