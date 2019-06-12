@@ -13,9 +13,9 @@ public interface StubBuilder<T> {
 
     StubBuilder<T> setMethod(Method method);
 
-    StubBuilder<T> then(Answer answer);
+    void then(Answer answer);
 
-    StubBuilder<T> thenReturn(T obj);
+    void thenReturn(T obj);
 
     void addObserver(BuildingStubObserver observer);
 

@@ -17,8 +17,8 @@ public class StubBuilderImpl<T> extends AbstractStubBuilder<T> {
     private Answer answer;
 
     @Override
-    public StubBuilder setArgMatchers(ArgMatcher... matchers) {
-        if (argMatchers == null) {
+    public StubBuilder<T> setArgMatchers(ArgMatcher... matchers) {
+        if (matchers == null) {
             this.argMatchers = new ArgMatcher[0];
         } else {
             this.argMatchers = matchers;
@@ -27,24 +27,25 @@ public class StubBuilderImpl<T> extends AbstractStubBuilder<T> {
     }
 
     @Override
-    public StubBuilder setMethod(Method method) {
+    public StubBuilder<T> setMethod(Method method) {
         this.method = method;
-        return null;
+        return this;
     }
 
     @Override
-    public StubBuilderImpl setTarget(Object target) {
+    public StubBuilder<T> setTarget(Object target) {
         this.target = target;
         return this;
     }
 
     @Override
-    public StubBuilder<T> then(Answer answer) {
-        return null;
+    public void then(Answer answer) {
+        this.answer = answer;
+        this.build();
     }
 
     @Override
     public IStub<T> doBuild() {
-        return new DefaultStubImpl<T>(target, method, argMatchers, answer);
+        return new DefaultStubImpl<>(target, method, argMatchers, answer);
     }
 }

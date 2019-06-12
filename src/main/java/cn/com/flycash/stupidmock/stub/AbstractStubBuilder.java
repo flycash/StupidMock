@@ -7,11 +7,11 @@ import java.util.List;
 
 public abstract class AbstractStubBuilder<T> implements StubBuilder<T> {
 
-    protected List<BuildingStubObserver> observerList = new LinkedList<>();
+    private List<BuildingStubObserver> observerList = new LinkedList<>();
 
     @Override
-    public StubBuilder<T> thenReturn(T obj) {
-        return this.then(new Returns<>(obj));
+    public void thenReturn(T obj) {
+        this.then(new Returns<>(obj));
     }
 
     @Override

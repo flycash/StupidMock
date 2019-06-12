@@ -1,6 +1,5 @@
 package cn.com.flycash.stupidmock.stub;
 
-import cn.com.flycash.stupidmock.MockObjectSkeleton;
 import cn.com.flycash.stupidmock.stub.answer.Answer;
 import cn.com.flycash.stupidmock.stub.args.ArgMatcher;
 
@@ -9,19 +8,19 @@ import java.lang.reflect.Method;
 /**
  * 这是一个Decorator模式。
  */
-public class ThreadSafeStubBuilder<T> extends AbstractStubBuilder<T> {
+public class ThreadSafeStubBuilder<T> implements StubBuilder<T> {
 
     private static final ThreadLocal<StubBuilder<?>> stubBuilder = new ThreadLocal<>();
 
     public ThreadSafeStubBuilder() {
-        if (builder() == null){
+        if (stubBuilder.get() == null){
             stubBuilder.set(new StubBuilderImpl());
         }
     }
 
     @Override
-    public StubBuilder<T> then(Answer answer) {
-        return builder().then(answer);
+    public void then(Answer answer) {
+        builder().then(answer);
     }
 
     @Override
@@ -42,6 +41,11 @@ public class ThreadSafeStubBuilder<T> extends AbstractStubBuilder<T> {
     @Override
     public void addObserver(BuildingStubObserver observer) {
         builder().addObserver(observer);
+    }
+
+    @Override
+    public void thenReturn(T obj) {
+        builder().thenReturn(obj);
     }
 
     @Override
