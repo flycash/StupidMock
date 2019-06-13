@@ -11,9 +11,9 @@ public class DefaultStubImpl<T> implements IStub<T> {
     private final Object target;
     private final Method method;
     private final ArgMatcher[] matchers;
-    private final Answer answer;
+    private final Answer<T> answer;
 
-    public DefaultStubImpl(Object target, Method method, ArgMatcher[] matchers, Answer answer) {
+    public DefaultStubImpl(Object target, Method method, ArgMatcher[] matchers, Answer<T> answer) {
         this.target = target;
         this.method = method;
         this.matchers = matchers;
@@ -47,7 +47,7 @@ public class DefaultStubImpl<T> implements IStub<T> {
     }
 
     @Override
-    public Answer getAnswer() {
+    public Answer<T> getAnswer() {
         return answer;
     }
 

@@ -15,9 +15,9 @@ public class WhenThenTest {
 
         assertEquals("Hello", result);
 
-//
-//        simpleObject.doSomething("a", "c");
+        StupidMock.when(simpleObject.doSomething("c", "d")).thenReturn("My name is Li");
 
-//        simpleObject.doSomething("a", "b");
+        result = simpleObject.doSomething("c", "d");
+        assertEquals("My name is Li", result);
     }
 }
