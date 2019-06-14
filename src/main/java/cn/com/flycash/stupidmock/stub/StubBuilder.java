@@ -9,13 +9,15 @@ public interface StubBuilder<T> {
 
     StubBuilder<T> setTarget(Object mockObj);
 
-    StubBuilder<T> setArgMatchers(ArgMatcher...matchers);
+    StubBuilder<T> addArgMatchers(ArgMatcher... matchers);
 
     StubBuilder<T> setMethod(Method method);
 
-    void then(Answer answer);
+    void then(Answer<T> answer);
 
     void thenReturn(T obj);
+
+    void thenThrow(RuntimeException e);
 
     void addObserver(BuildingStubObserver observer);
 

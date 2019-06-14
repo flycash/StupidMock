@@ -13,7 +13,7 @@ public class ThreadSafeStubBuilder<T> implements StubBuilder<T> {
     private static final ThreadLocal<StubBuilder<?>> stubBuilder = new ThreadLocal<>();
 
     public ThreadSafeStubBuilder() {
-        if (stubBuilder.get() == null){
+        if (stubBuilder.get() == null) {
             stubBuilder.set(new StubBuilderImpl());
         }
     }
@@ -21,6 +21,7 @@ public class ThreadSafeStubBuilder<T> implements StubBuilder<T> {
     @Override
     public void then(Answer answer) {
         builder().then(answer);
+        stubBuilder.remove();
     }
 
     @Override
@@ -29,8 +30,8 @@ public class ThreadSafeStubBuilder<T> implements StubBuilder<T> {
     }
 
     @Override
-    public StubBuilder<T> setArgMatchers(ArgMatcher... matchers) {
-        return builder().setArgMatchers(matchers);
+    public StubBuilder<T> addArgMatchers(ArgMatcher... matchers) {
+        return builder().addArgMatchers(matchers);
     }
 
     @Override
@@ -46,6 +47,13 @@ public class ThreadSafeStubBuilder<T> implements StubBuilder<T> {
     @Override
     public void thenReturn(T obj) {
         builder().thenReturn(obj);
+        stubBuilder.remove();
+    }
+
+    @Override
+    public void thenThrow(RuntimeException e) {
+        builder().thenThrow(e);
+        stubBuilder.remove();
     }
 
     @Override

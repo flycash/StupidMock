@@ -30,6 +30,7 @@ public class StupidMockClassLoader extends ClassLoader {
 
     private Set<String> clzNeedToModified = new HashSet<>();
     private String testClzName;
+
     public StupidMockClassLoader(Class<?> testClz) {
         super(Thread.currentThread().getContextClassLoader());
         PrepareForTest annotation = testClz.getAnnotation(PrepareForTest.class);
@@ -85,7 +86,6 @@ public class StupidMockClassLoader extends ClassLoader {
             throw new ClassNotFoundException(name, e);
         }
     }
-
 
 
     private Class<?> loadModifiedClass(String name) throws ClassNotFoundException {

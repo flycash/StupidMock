@@ -1,6 +1,7 @@
 package cn.com.flycash.stupidmock.stub;
 
 import cn.com.flycash.stupidmock.stub.answer.Returns;
+import cn.com.flycash.stupidmock.stub.answer.Throws;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -12,6 +13,11 @@ public abstract class AbstractStubBuilder<T> implements StubBuilder<T> {
     @Override
     public void thenReturn(T obj) {
         this.then(new Returns<>(obj));
+    }
+
+    @Override
+    public void thenThrow(RuntimeException e) {
+        this.then(new Throws<>(e));
     }
 
     @Override

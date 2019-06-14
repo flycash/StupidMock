@@ -15,7 +15,7 @@ public class RemoveFinalFlagClassVisitor extends ClassVisitor {
     @Override
     public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
         // we have the final flag
-        if((access & Opcodes.ACC_FINAL) == Opcodes.ACC_FINAL) {
+        if ((access & Opcodes.ACC_FINAL) == Opcodes.ACC_FINAL) {
             //remove the final flag
             access = access ^ Opcodes.ACC_FINAL;
         }

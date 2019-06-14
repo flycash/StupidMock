@@ -6,9 +6,9 @@ import com.google.common.base.Defaults;
 /**
  * 该实现将返回各个类型的默认值
  */
-public enum  DefaultValueAnswer implements Answer<Object> {
-    INSTANCE
-    ;
+public enum DefaultValueAnswer implements Answer<Object> {
+    INSTANCE;
+
     @Override
     public Object answer(Invocation invocation) {
         Class<?> returnClz = invocation.getMethod().getReturnType();

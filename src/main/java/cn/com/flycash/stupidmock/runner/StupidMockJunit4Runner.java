@@ -1,7 +1,6 @@
 package cn.com.flycash.stupidmock.runner;
 
 import cn.com.flycash.stupidmock.classloader.StupidMockClassLoader;
-import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.InitializationError;
 

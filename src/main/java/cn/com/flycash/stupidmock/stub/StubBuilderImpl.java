@@ -4,6 +4,9 @@ import cn.com.flycash.stupidmock.stub.answer.Answer;
 import cn.com.flycash.stupidmock.stub.args.ArgMatcher;
 
 import java.lang.reflect.Method;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 public class StubBuilderImpl<T> extends AbstractStubBuilder<T> {
 
@@ -13,16 +16,12 @@ public class StubBuilderImpl<T> extends AbstractStubBuilder<T> {
     private Object target;
 
     private Method method;
-    private ArgMatcher[] argMatchers;
-    private Answer answer;
+    private List<ArgMatcher> argMatchers = new LinkedList<>();
+    private Answer<T> answer;
 
     @Override
-    public StubBuilder<T> setArgMatchers(ArgMatcher... matchers) {
-        if (matchers == null) {
-            this.argMatchers = new ArgMatcher[0];
-        } else {
-            this.argMatchers = matchers;
-        }
+    public StubBuilder<T> addArgMatchers(ArgMatcher... matchers) {
+        Collections.addAll(argMatchers, matchers);
         return this;
     }
 
@@ -39,7 +38,7 @@ public class StubBuilderImpl<T> extends AbstractStubBuilder<T> {
     }
 
     @Override
-    public void then(Answer answer) {
+    public void then(Answer<T> answer) {
         this.answer = answer;
         this.build();
     }
