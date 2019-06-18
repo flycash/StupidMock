@@ -21,5 +21,11 @@ public interface StubBuilder<T> {
 
     void addObserver(BuildingStubObserver observer);
 
+    <MOCK> MOCK when(MOCK mock);
+
+    void doAnswer(Answer<T> answer);
+
+    boolean prepare();
+
     IStub<T> build();
 }

@@ -32,5 +32,11 @@ public abstract class AbstractStubBuilder<T> implements StubBuilder<T> {
         return stub;
     }
 
+    @Override
+    public <MOCK> MOCK when(MOCK mock) {
+        this.setTarget(mock);
+        return mock;
+    }
+
     protected abstract IStub<T> doBuild();
 }

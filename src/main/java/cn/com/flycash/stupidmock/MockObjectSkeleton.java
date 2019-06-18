@@ -4,6 +4,7 @@ import cn.com.flycash.stupidmock.stub.DefaultValueStubImpl;
 import cn.com.flycash.stupidmock.stub.IStub;
 import cn.com.flycash.stupidmock.stub.StubBuilder;
 import cn.com.flycash.stupidmock.stub.ThreadSafeStubBuilder;
+import cn.com.flycash.stupidmock.stub.answer.Answer;
 
 import java.util.LinkedList;
 
@@ -19,15 +20,23 @@ public class MockObjectSkeleton {
 
         StubBuilder stubBuilder = new ThreadSafeStubBuilder();
         stubBuilder.setTarget(invocation.getInvoker())
-                .setMethod(invocation.getMethod())
-                .addObserver(this::addStub);
+                .setMethod(invocation.getMethod());
 
-        return (T) stubList.stream()
-                .filter(stub -> stub.match(invocation))
+        IStub<T> stub = stubList.stream()
+                .filter(s -> s.match(invocation))
                 .findFirst()
                 .orElse(DefaultValueStubImpl.INSTANCE)
-                .getAnswer()
+                ;
+        Object result = stub.getAnswer()
                 .answer(invocation);
+
+        if (stubBuilder.prepare()) {
+            stubList.addFirst(stubBuilder.build());
+        } else {
+            stubBuilder.addObserver(this::addStub);
+        }
+
+        return (T) result;
     }
 
     public synchronized void addStub(IStub stub) {

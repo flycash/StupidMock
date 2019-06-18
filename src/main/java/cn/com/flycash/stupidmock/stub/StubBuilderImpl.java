@@ -44,6 +44,16 @@ public class StubBuilderImpl<T> extends AbstractStubBuilder<T> {
     }
 
     @Override
+    public void doAnswer(Answer<T> answer) {
+        this.answer = answer;
+    }
+
+    @Override
+    public boolean prepare() {
+        return method != null && answer != null & target != null;
+    }
+
+    @Override
     public IStub<T> doBuild() {
         return new DefaultStubImpl<>(target, method, argMatchers, answer);
     }

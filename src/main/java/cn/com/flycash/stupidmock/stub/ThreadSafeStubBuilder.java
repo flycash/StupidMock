@@ -64,6 +64,21 @@ public class ThreadSafeStubBuilder<T> implements StubBuilder<T> {
         return stub;
     }
 
+    @Override
+    public <MOCK> MOCK when(MOCK mock) {
+        return builder().when(mock);
+    }
+
+    @Override
+    public boolean prepare() {
+        return builder().prepare();
+    }
+
+    @Override
+    public void doAnswer(Answer<T> answer) {
+        builder().doAnswer(answer);
+    }
+
     @SuppressWarnings("unchecked")
     private StubBuilder<T> builder() {
         return (StubBuilder<T>) stubBuilder.get();

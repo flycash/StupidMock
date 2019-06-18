@@ -5,4 +5,9 @@ public class SimpleObject {
     public String doSomething(String a, String b) {
         return a + b;
     }
+
+    public void voidMethod(String a, String b) {
+        System.out.println(a+b);
+        System.out.println(a+b);
+    }
 }

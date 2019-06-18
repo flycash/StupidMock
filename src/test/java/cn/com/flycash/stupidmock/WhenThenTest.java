@@ -2,6 +2,7 @@ package cn.com.flycash.stupidmock;
 
 import cn.com.flycash.stupidmock.testobj.SimpleObject;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import static org.junit.Assert.*;
 import static cn.com.flycash.stupidmock.Matchers.*;
@@ -64,5 +65,21 @@ public class WhenThenTest {
         StupidMock.when(simpleObject.doSomething(any(String.class), any(String.class)))
                 .thenThrow(new IllegalArgumentException());
         simpleObject.doSomething("a", "c");
+    }
+
+    @Test
+    public void voidMethod() {
+        SimpleObject simpleObject = StupidMock.mock(SimpleObject.class);
+        StupidMock.doNothing()
+                .when(simpleObject)
+                .voidMethod(any(String.class), any(String.class));
+        simpleObject.voidMethod("a", "b");
+
+        StupidMock.answer(invocation -> {
+            System.out.println("I'm coming!");
+            return null;
+        }).when(simpleObject).voidMethod(any(String.class), any(String.class));
+
+        simpleObject.voidMethod("a", "b");
     }
 }
