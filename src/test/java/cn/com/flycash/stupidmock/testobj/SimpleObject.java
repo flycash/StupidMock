@@ -8,6 +8,9 @@ public class SimpleObject {
 
     public void voidMethod(String a, String b) {
         System.out.println(a+b);
-        System.out.println(a+b);
+    }
+
+    public final String finalMethod(String a, String b) {
+        return a + b;
     }
 }

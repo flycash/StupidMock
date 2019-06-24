@@ -1,13 +1,17 @@
 package cn.com.flycash.stupidmock;
 
+import cn.com.flycash.stupidmock.classloader.annotation.PrepareForTest;
+import cn.com.flycash.stupidmock.runner.StupidMockJunit4Runner;
 import cn.com.flycash.stupidmock.testobj.SimpleObject;
 import org.junit.Test;
-import org.mockito.Mockito;
+import org.junit.runner.RunWith;
 
 import static org.junit.Assert.*;
 import static cn.com.flycash.stupidmock.Matchers.*;
 
 
+@PrepareForTest(targets = {SimpleObject.class})
+@RunWith(StupidMockJunit4Runner.class)
 public class WhenThenTest {
     @Test
     public void mockEqual() {
@@ -81,5 +85,14 @@ public class WhenThenTest {
         }).when(simpleObject).voidMethod(any(String.class), any(String.class));
 
         simpleObject.voidMethod("a", "b");
+    }
+
+    @Test
+    public void finalMethod() {
+        SimpleObject simpleObject = StupidMock.mock(SimpleObject.class);
+        StupidMock.when(simpleObject.finalMethod(any(String.class), any(String.class)))
+                .thenReturn("final");
+        String result = simpleObject.finalMethod("a", "b");
+        assertEquals("final", result);
     }
 }

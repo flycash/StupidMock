@@ -1,6 +1,7 @@
 package cn.com.flycash.stupidmock.classloader;
 
 import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
 /**
@@ -14,11 +15,25 @@ public class RemoveFinalFlagClassVisitor extends ClassVisitor {
 
     @Override
     public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
-        // we have the final flag
+        super.visit(version, removeFinal(access), name, signature, superName, interfaces);
+    }
+
+    @Override
+    public MethodVisitor visitMethod(
+            final int access,
+            final String name,
+            final String descriptor,
+            final String signature,
+            final String[] exceptions) {
+        return super.visitMethod(removeFinal(access), name, descriptor, signature, exceptions);
+    }
+
+    private int removeFinal(int access) {
         if ((access & Opcodes.ACC_FINAL) == Opcodes.ACC_FINAL) {
             //remove the final flag
-            access = access ^ Opcodes.ACC_FINAL;
+            return access ^ Opcodes.ACC_FINAL;
         }
-        super.visit(version, access, name, signature, superName, interfaces);
+        return access;
     }
+
 }
