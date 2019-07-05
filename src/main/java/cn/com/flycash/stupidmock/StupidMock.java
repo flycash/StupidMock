@@ -46,4 +46,8 @@ public class StupidMock {
         builder.doAnswer(answer);
         return builder;
     }
+
+    public static void mockStatic(Class<?> staticClz) {
+
+    }
 }

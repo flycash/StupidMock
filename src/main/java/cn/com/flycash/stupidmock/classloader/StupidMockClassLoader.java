@@ -24,7 +24,9 @@ public class StupidMockClassLoader extends ClassLoader {
             "java.",
             "sun.",
             "jdk.",
-            "org.junit."
+            "org.junit.",
+            "org.powermock.",
+            "org.mockito."
     };
 
 

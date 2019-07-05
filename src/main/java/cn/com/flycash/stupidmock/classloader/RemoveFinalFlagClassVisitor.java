@@ -4,6 +4,7 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
+
 /**
  * this class visitor will remove the final tag of class declaration
  */
@@ -25,7 +26,16 @@ public class RemoveFinalFlagClassVisitor extends ClassVisitor {
             final String descriptor,
             final String signature,
             final String[] exceptions) {
-        return super.visitMethod(removeFinal(access), name, descriptor, signature, exceptions);
+
+        MethodVisitor methodVisitor = this.cv.visitMethod(removeFinal(access), name, descriptor, signature, exceptions);
+        if (staticMethod(access)) {
+            return new InstrumentingStaticMethodVisitor(this.api, methodVisitor);
+        }
+        return methodVisitor;
+    }
+
+    private boolean staticMethod(int access) {
+        return (access & Opcodes.ACC_STATIC) == Opcodes.ACC_STATIC;
     }
 
     private int removeFinal(int access) {
