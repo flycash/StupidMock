@@ -1,13 +1,14 @@
 package cn.com.flycash.stupidmock.classloader;
 
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
+import org.objectweb.asm.*;
+
+import javax.tools.OptionChecker;
 
 public class StaticMethodReplacer extends ClassVisitor {
-    public StaticMethodReplacer(int api, ClassVisitor classVisitor) {
+    private String clzName;
+    public StaticMethodReplacer(int api, ClassVisitor classVisitor, String clzName) {
         super(api, classVisitor);
+        this.clzName = clzName;
     }
 
     @Override
@@ -19,12 +20,12 @@ public class StaticMethodReplacer extends ClassVisitor {
     }
 
     private void generateNewBody(int access, String name, String descriptor, String signature, String[] exceptions) {
-        MethodVisitor mv = super.visitMethod(access, name, descriptor, signature, exceptions);
-        Type type = Type.getMethodType(descriptor);
-        Type retType = type.getReturnType();
-        Type[] paramTypes = type.getArgumentTypes();
-
-
+        MethodVisitor mv = super.visitMethod(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC,
+                "skeleton",
+                "(Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;)Ljava/lang/Object;",
+                null,
+                null);
+        mv.visitEnd();
     }
 
     private boolean staticMethod(int access) {
