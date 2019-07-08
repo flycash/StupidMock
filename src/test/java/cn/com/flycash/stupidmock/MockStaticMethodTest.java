@@ -15,7 +15,8 @@ public class MockStaticMethodTest {
     public void mockStaticMethod() {
         StupidMock.mockStatic(StaticObj.class);
         StupidMock.when(StaticObj.staticMethod("a", "b")).thenReturn("hello");
-        StaticObj.staticMethod("a", "b");
+        String result = StaticObj.staticMethod("a", "b");
+        System.out.println(result);
     }
 
 }

@@ -6,7 +6,9 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.lang.ref.SoftReference;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -95,7 +97,7 @@ public class StupidMockClassLoader extends ClassLoader {
             ClassReader reader = new ClassReader(name);
             ClassWriter writer = new ClassWriter(reader, 0);
             RemoveFinalFlagClassVisitor classVisitor = new RemoveFinalFlagClassVisitor(writer);
-            reader.accept(classVisitor, ClassReader.SKIP_CODE);
+            reader.accept(classVisitor, 0);
             byte[] bytes = writer.toByteArray();
             return defineClass(name, bytes, 0, bytes.length);
         } catch (IOException e) {

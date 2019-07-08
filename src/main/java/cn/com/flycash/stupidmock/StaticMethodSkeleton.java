@@ -1,4 +1,4 @@
-package cn.com.flycash.stupidmock.stub;
+package cn.com.flycash.stupidmock;
 
 public class StaticMethodSkeleton {
 
