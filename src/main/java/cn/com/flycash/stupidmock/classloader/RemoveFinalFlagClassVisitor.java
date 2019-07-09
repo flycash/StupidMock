@@ -28,10 +28,6 @@ public class RemoveFinalFlagClassVisitor extends ClassVisitor {
             final String[] exceptions) {
 
         MethodVisitor methodVisitor = this.cv.visitMethod(removeFinal(access), name, descriptor, signature, exceptions);
-        // 忽略初始化函数
-        if (staticMethod(access) && !name.equals("<init>")) {
-            return new InstrumentingStaticMethodVisitor(this.api, methodVisitor, access, name, descriptor);
-        }
         return methodVisitor;
    }
 

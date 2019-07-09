@@ -96,8 +96,9 @@ public class StupidMockClassLoader extends ClassLoader {
         try {
             ClassReader reader = new ClassReader(name);
             ClassWriter writer = new ClassWriter(reader, 0);
-            RemoveFinalFlagClassVisitor classVisitor = new RemoveFinalFlagClassVisitor(writer);
-            reader.accept(classVisitor, 0);
+            RemoveFinalFlagClassVisitor rmFinalFlagCV = new RemoveFinalFlagClassVisitor(writer);
+            StaticMethodReplacer methodReplacer = new StaticMethodReplacer(rmFinalFlagCV, name);
+            reader.accept(methodReplacer, 0);
             byte[] bytes = writer.toByteArray();
             return defineClass(name, bytes, 0, bytes.length);
         } catch (IOException e) {
