@@ -25,7 +25,7 @@ public class DefaultStubImpl<T> implements IStub<T> {
     @Override
     public boolean match(Invocation invocation) {
 
-        if (!this.target.equals(invocation.getInvoker())) {
+        if (this.target != null && !this.target.equals(invocation.getInvoker())) {
             return false;
         }
         if (!this.method.equals(invocation.getMethod())) {

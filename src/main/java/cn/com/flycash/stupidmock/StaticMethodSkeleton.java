@@ -1,27 +1,63 @@
 package cn.com.flycash.stupidmock;
 
+import cn.com.flycash.stupidmock.classloader.ClassCache;
+import cn.com.flycash.stupidmock.stub.DefaultValueStubImpl;
+import cn.com.flycash.stupidmock.stub.IStub;
+import cn.com.flycash.stupidmock.stub.StubBuilder;
+import cn.com.flycash.stupidmock.stub.ThreadSafeStubBuilder;
+import org.objectweb.asm.Type;
+
+import java.lang.reflect.Method;
+import java.util.Iterator;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.LinkedBlockingQueue;
+
 public class StaticMethodSkeleton {
 
-    public static String skeleton(String a, String b) {
-        return "aaaa, hello";
-    }
+    private static final ConcurrentMap<String, LinkedBlockingQueue<IStub>> clzToStub = new ConcurrentHashMap<>();
 
+    @SuppressWarnings("unchecked")
     public static Object skeleton(String clzName,
-                                  int access,
                                   String name,
                                   String descriptor,
-                                  String signature,
-                                  String[] exceptions) {
-        System.out.println("I'm coming");
-        return null;
-    }
+                                  Object[] args
+    ) {
+//        return "hello";
+        LinkedBlockingQueue queue = clzToStub.computeIfAbsent(clzName, key-> new LinkedBlockingQueue<>());
+        Type methodType = Type.getMethodType(descriptor);
+        Class staticMethodClz = ClassCache.INSTANCE.get(clzName);
+        Type[] targetMethodParamsType = methodType.getArgumentTypes();
 
-    public static Object invoke(String clzName,
-                                int access,
-                                String name,
-                                String descriptor,
-                                String signature,
-                                String[] exceptions) {
-        return skeleton(clzName, access, name, descriptor, signature, exceptions);
+        Class[] paramClzs = new Class[targetMethodParamsType.length];
+
+
+        try {
+
+            for (int i = 0; i < targetMethodParamsType.length; i++) {
+                Class paramClz = ClassCache.INSTANCE.get(targetMethodParamsType[i].getClassName());
+                paramClzs[i] = paramClz;
+            }
+
+            Method method = staticMethodClz.getDeclaredMethod(name, paramClzs);
+            StubBuilder safeStubBuilder= new ThreadSafeStubBuilder();
+            safeStubBuilder.setMethod(method)
+                    .setTarget(null);
+            safeStubBuilder.addObserver(stub -> queue.add(stub));
+            Iterator<IStub> iStubs = queue.iterator();
+
+            Invocation invocation = new Invocation(null, method, args);
+
+            while (iStubs.hasNext()) {
+                IStub stub = iStubs.next();
+                if (stub.match(invocation)) {
+                    return stub.getAnswer().answer(invocation);
+                }
+            }
+            return DefaultValueStubImpl.INSTANCE.getAnswer().answer(invocation);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Can not find the method. Class name: " + clzName
+                    + ", method name: " + name +", descriptor:" + descriptor, e);
+        }
     }
 }

@@ -6,6 +6,7 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -20,7 +21,7 @@ import java.util.stream.Collectors;
 public class StupidMockClassLoader extends ClassLoader {
 
     //缓存
-    private final ConcurrentMap<String, SoftReference<Class<?>>> classes;
+    private ClassCache classCache = ClassCache.INSTANCE;
 
     private final static String[] ALWAYS_IGNORE_PACKAGE = new String[]{
             "java.",
@@ -28,7 +29,8 @@ public class StupidMockClassLoader extends ClassLoader {
             "jdk.",
             "org.junit.",
             "org.powermock.",
-            "org.mockito."
+            "org.mockito.",
+            "cn.com.flycash.stupidmock.classloader.ClassCache"
     };
 
 
@@ -44,8 +46,6 @@ public class StupidMockClassLoader extends ClassLoader {
                     .map(Class::getName)
                     .collect(Collectors.toSet());
         }
-
-        classes = new ConcurrentHashMap<>();
         testClzName = testClz.getName();
     }
 
@@ -74,7 +74,7 @@ public class StupidMockClassLoader extends ClassLoader {
             if (resolve) {
                 resolveClass(result);
             }
-            classes.put(name, new SoftReference<>(result));
+            classCache.put(result);
             return result;
         }
     }
@@ -95,11 +95,18 @@ public class StupidMockClassLoader extends ClassLoader {
     private Class<?> loadModifiedClass(String name) throws ClassNotFoundException {
         try {
             ClassReader reader = new ClassReader(name);
-            ClassWriter writer = new ClassWriter(reader, 0);
+            ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_FRAMES);
             RemoveFinalFlagClassVisitor rmFinalFlagCV = new RemoveFinalFlagClassVisitor(writer);
             StaticMethodReplacer methodReplacer = new StaticMethodReplacer(rmFinalFlagCV, name);
             reader.accept(methodReplacer, 0);
             byte[] bytes = writer.toByteArray();
+//            File file = new File("/Users/mindeng/tmp/StaticObj.class");
+//            file.deleteOnExit();
+//            boolean result = file.createNewFile();
+//            System.out.println("create file: " + result);
+            FileOutputStream outputStream = new FileOutputStream("/Users/mindeng/tmp/StaticObj.class");
+            outputStream.write(bytes);
+            outputStream.close();
             return defineClass(name, bytes, 0, bytes.length);
         } catch (IOException e) {
             throw new ClassNotFoundException(name, e);
@@ -108,11 +115,7 @@ public class StupidMockClassLoader extends ClassLoader {
 
 
     private Class<?> findLoadedClass1(String name) {
-        SoftReference<Class<?>> reference = classes.get(name);
-        Class<?> clazz = null;
-        if (reference != null) {
-            clazz = reference.get();
-        }
+        Class<?> clazz = classCache.get(name);
         if (clazz == null) {
             clazz = findLoadedClass(name);
         }
