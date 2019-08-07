@@ -35,12 +35,12 @@ public class StaticMethodReplacer extends ClassVisitor {
     @Override
     public MethodVisitor visitMethod(int access, String name, String descriptor, String signature, String[] exceptions) {
 //        MethodVisitor visitor = super.visitMethod(access, name, descriptor, signature, exceptions);
-        if (staticMethod(access) && !name.equals("<init>")) {
-            generateNewBody(access, name, descriptor, signature, exceptions);
-        }
-        if (name.equals("<init>")) {
+
+        if (name.equals("<init>") || !staticMethod(access)) {
             return super.visitMethod(access, name, descriptor, signature, exceptions);
         }
+        generateNewBody(access, name, descriptor, signature, exceptions);
+
         return super.visitMethod(access, "rename____" + name, descriptor, signature, exceptions);
     }
 

@@ -2,6 +2,7 @@ package cn.com.flycash.stupidmock;
 
 import cn.com.flycash.stupidmock.classloader.annotation.PrepareForTest;
 import cn.com.flycash.stupidmock.runner.StupidMockJunit4Runner;
+import cn.com.flycash.stupidmock.stub.answer.RealCallAnswer;
 import cn.com.flycash.stupidmock.testobj.StaticObj;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,4 +28,10 @@ public class MockStaticMethodTest {
         assertEquals(12, StaticObj.intMethod(123, 345));
     }
 
+    @Test
+    public void mockRealMethodCall() {
+        StupidMock.when(StaticObj.staticMethod(Matchers.any(String.class), Matchers.any(String.class))).then(RealCallAnswer.INSTANCE);
+        String result = StaticObj.staticMethod("a", "b");
+        assertEquals("ab", result);
+    }
 }

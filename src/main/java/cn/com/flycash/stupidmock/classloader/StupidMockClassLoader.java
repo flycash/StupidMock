@@ -100,13 +100,13 @@ public class StupidMockClassLoader extends ClassLoader {
             StaticMethodReplacer methodReplacer = new StaticMethodReplacer(rmFinalFlagCV, name);
             reader.accept(methodReplacer, 0);
             byte[] bytes = writer.toByteArray();
-//            File file = new File("/Users/mindeng/tmp/StaticObj.class");
+//            File file = new File("/Users/mindeng/tmp/SimpleObj.class");
 //            file.deleteOnExit();
 //            boolean result = file.createNewFile();
 //            System.out.println("create file: " + result);
-            FileOutputStream outputStream = new FileOutputStream("/Users/mindeng/tmp/StaticObj.class");
-            outputStream.write(bytes);
-            outputStream.close();
+//            FileOutputStream outputStream = new FileOutputStream("/Users/mindeng/tmp/StaticObj.class");
+//            outputStream.write(bytes);
+//            outputStream.close();
             return defineClass(name, bytes, 0, bytes.length);
         } catch (IOException e) {
             throw new ClassNotFoundException(name, e);

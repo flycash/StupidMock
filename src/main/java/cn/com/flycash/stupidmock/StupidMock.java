@@ -6,6 +6,7 @@ import cn.com.flycash.stupidmock.stub.StubBuilder;
 import cn.com.flycash.stupidmock.stub.ThreadSafeStubBuilder;
 import cn.com.flycash.stupidmock.stub.answer.Answer;
 import cn.com.flycash.stupidmock.stub.answer.DefaultValueAnswer;
+import cn.com.flycash.stupidmock.stub.answer.RealCallAnswer;
 import net.sf.cglib.proxy.Callback;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.Factory;
@@ -45,9 +46,5 @@ public class StupidMock {
         StubBuilder<T> builder = new ThreadSafeStubBuilder<>();
         builder.doAnswer(answer);
         return builder;
-    }
-
-    public static void mockStatic(Class<?> staticClz) {
-
     }
 }

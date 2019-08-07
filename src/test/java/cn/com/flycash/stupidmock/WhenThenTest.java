@@ -2,6 +2,8 @@ package cn.com.flycash.stupidmock;
 
 import cn.com.flycash.stupidmock.classloader.annotation.PrepareForTest;
 import cn.com.flycash.stupidmock.runner.StupidMockJunit4Runner;
+import cn.com.flycash.stupidmock.stub.answer.Answer;
+import cn.com.flycash.stupidmock.stub.answer.RealCallAnswer;
 import cn.com.flycash.stupidmock.testobj.SimpleObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -94,5 +96,14 @@ public class WhenThenTest {
                 .thenReturn("final");
         String result = simpleObject.finalMethod("a", "b");
         assertEquals("final", result);
+    }
+
+    @Test
+    public void realMethod() {
+        SimpleObject simpleObject = StupidMock.mock(SimpleObject.class);
+        StupidMock.when(simpleObject.doSomething(any(String.class), any(String.class)))
+                .then(RealCallAnswer.INSTANCE);
+        String result = simpleObject.doSomething("a", "b");
+        assertEquals("ab", result);
     }
 }

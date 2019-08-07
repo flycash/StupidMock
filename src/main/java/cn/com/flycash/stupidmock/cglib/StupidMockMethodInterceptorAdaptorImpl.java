@@ -20,6 +20,6 @@ public class StupidMockMethodInterceptorAdaptorImpl implements MethodInterceptor
         if (method.getDeclaringClass() == Object.class) {
             return proxy.invokeSuper(obj, args);
         }
-        return skeleton.mock(new Invocation(obj, method, args));
+        return skeleton.mock(new Invocation(obj, method, args, proxy));
     }
 }
